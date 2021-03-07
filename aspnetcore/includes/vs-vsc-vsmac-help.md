@@ -1,9 +1,12 @@
+---
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+---
 # [Visual Studio](#tab/visual-studio)
 
 ## Visual Studio help
 
-* [Learn to debug C# code using Visual Studio](https://docs.microsoft.com/visualstudio/debugger/getting-started-with-the-debugger?view=vs-2017)
-* [Introduction to the Visual Studio IDE](https://docs.microsoft.com/visualstudio/ide/visual-studio-ide?view=vs-2017)
+* [Learn to debug C# code using Visual Studio](/visualstudio/debugger/getting-started-with-the-debugger)
+* [Introduction to the Visual Studio IDE](/visualstudio/ide/visual-studio-ide)
 
 # [Visual Studio Code](#tab/visual-studio-code)
 
@@ -22,7 +25,7 @@
 
 ## Visual Studio for Mac help
 
-* [Visual Studio for Mac Tour](https://docs.microsoft.com/visualstudio/mac/ide-tour)
-* [Introducing Visual Studio for Mac](https://docs.microsoft.com/visualstudio/mac/)
+* [Visual Studio for Mac Tour](/visualstudio/mac/ide-tour)
+* [Introducing Visual Studio for Mac](/visualstudio/mac/)
 
 ---

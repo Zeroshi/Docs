@@ -5,8 +5,8 @@ description: Learn how to get started with WebSockets in ASP.NET Core.
 monikerRange: '>= aspnetcore-1.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 11/12/2019
-no-loc: [SignalR]
+ms.date: 11/1/2020
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: fundamentals/websockets
 ---
 # WebSockets support in ASP.NET Core
@@ -15,56 +15,44 @@ By [Tom Dykstra](https://github.com/tdykstra) and [Andrew Stanton-Nurse](https:/
 
 This article explains how to get started with WebSockets in ASP.NET Core. [WebSocket](https://wikipedia.org/wiki/WebSocket) ([RFC 6455](https://tools.ietf.org/html/rfc6455)) is a protocol that enables two-way persistent communication channels over TCP connections. It's used in apps that benefit from fast, real-time communication, such as chat, dashboard, and game apps.
 
-[View or download sample code](https://github.com/aspnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/websockets/samples) ([how to download](xref:index#how-to-download-a-sample)). [How to run](#sample-app).
+[View or download sample code](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/websockets/samples) ([how to download](xref:index#how-to-download-a-sample)). [How to run](#sample-app).
 
 ## SignalR
 
 [ASP.NET Core SignalR](xref:signalr/introduction) is a library that simplifies adding real-time web functionality to apps. It uses WebSockets whenever possible.
 
-For most applications, we recommend SignalR over raw WebSockets. SignalR provides transport fallback for environments where WebSockets is not available. It also provides a simple remote procedure call app model. And in most scenarios, SignalR has no significant performance disadvantage compared to using raw WebSockets.
+For most applications, we recommend SignalR over raw WebSockets. SignalR provides transport fallback for environments where WebSockets is not available. It also provides a basic remote procedure call app model. And in most scenarios, SignalR has no significant performance disadvantage compared to using raw WebSockets.
+
+For some apps, [gRPC on .NET](xref:grpc/index) provides an alternative to WebSockets.
 
 ## Prerequisites
 
-* ASP.NET Core 1.1 or later
-* Any OS that supports ASP.NET Core:
-  
+* Any OS that supports ASP.NET Core:  
   * Windows 7 / Windows Server 2008 or later
   * Linux
-  * macOS
-  
+  * macOS  
 * If the app runs on Windows with IIS:
-
   * Windows 8 / Windows Server 2012 or later
   * IIS 8 / IIS 8 Express
-  * WebSockets must be enabled (See the [IIS/IIS Express support](#iisiis-express-support) section.).
-  
+  * WebSockets must be enabled. See the [IIS/IIS Express support](#iisiis-express-support) section.  
 * If the app runs on [HTTP.sys](xref:fundamentals/servers/httpsys):
-
   * Windows 8 / Windows Server 2012 or later
-
 * For supported browsers, see https://caniuse.com/#feat=websockets.
 
-::: moniker range="< aspnetcore-2.1"
-
-## NuGet package
-
-Install the [Microsoft.AspNetCore.WebSockets](https://www.nuget.org/packages/Microsoft.AspNetCore.WebSockets/) package.
-
-::: moniker-end
-
 ## Configure the middleware
-
 
 Add the WebSockets middleware in the `Configure` method of the `Startup` class:
 
 [!code-csharp[](websockets/samples/2.x/WebSocketsSample/Startup.cs?name=UseWebSockets)]
+
+> [!NOTE]
+> If you would like to accept WebSocket requests in a controller, the call to `app.UseWebSockets` must occur before `app.UseEndpoints`.
 
 ::: moniker range="< aspnetcore-2.2"
 
 The following settings can be configured:
 
 * `KeepAliveInterval` - How frequently to send "ping" frames to the client to ensure proxies keep the connection open. The default is two minutes.
-* `ReceiveBufferSize` - The size of the buffer used to receive data. Advanced users may need to change this for performance tuning based on the size of the data. The default is 4 KB.
 
 ::: moniker-end
 
@@ -73,7 +61,6 @@ The following settings can be configured:
 The following settings can be configured:
 
 * `KeepAliveInterval` - How frequently to send "ping" frames to the client to ensure proxies keep the connection open. The default is two minutes.
-* <xref:Microsoft.AspNetCore.Builder.WebSocketOptions.ReceiveBufferSize> - The size of the buffer used to receive data. Advanced users may need to change this for performance tuning based on the size of the data. The default is 4 KB.
 * `AllowedOrigins` - A list of allowed Origin header values for WebSocket requests. By default, all origins are allowed. See "WebSocket origin restriction" below for details.
 
 ::: moniker-end
@@ -99,19 +86,11 @@ Object name: 'HttpResponseStream'.
 
 If you're using a background service to write data to a WebSocket, make sure you keep the middleware pipeline running. Do this by using a <xref:System.Threading.Tasks.TaskCompletionSource%601>. Pass the `TaskCompletionSource` to your background service and have it call <xref:System.Threading.Tasks.TaskCompletionSource%601.TrySetResult%2A> when you finish with the WebSocket. Then `await` the <xref:System.Threading.Tasks.TaskCompletionSource%601.Task> property during the request, as shown in the following example:
 
-```csharp
-app.Use(async (context, next) => {
-    var socket = await context.WebSockets.AcceptWebSocketAsync();
-    var socketFinishedTcs = new TaskCompletionSource<object>();
+[!code-csharp[](websockets/samples/2.x/WebSocketsSample/Startup2.cs?name=AcceptWebSocket)]
 
-    BackgroundSocketProcessor.AddSocket(socket, socketFinishedTcs); 
+The WebSocket closed exception can also happen when returning too soon from an action method. When accepting a socket in an action method, wait for the code that uses the socket to complete before returning from the action method.
 
-    await socketFinishedTcs.Task;
-});
-```
-The WebSocket closed exception can also happen if you return too soon from an action method. If you accept a socket in an action method, wait for the code that uses the socket to complete before returning from the action method.
-
-Never use `Task.Wait()`, `Task.Result`, or similar blocking calls to wait for the socket to complete, as that can cause serious threading issues. Always use `await`.
+Never use `Task.Wait`, `Task.Result`, or similar blocking calls to wait for the socket to complete, as that can cause serious threading issues. Always use `await`.
 
 ## Send and receive messages
 
@@ -193,11 +172,10 @@ If using the WebSocket support in [socket.io](https://socket.io/) on [Node.js](h
 
 ## Sample app
 
-The [sample app](https://github.com/aspnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/websockets/samples) that accompanies this article is an echo app. It has a web page that makes WebSocket connections, and the server resends any messages it receives back to the client. Run the app from a command prompt (it's not set up to run from Visual Studio with IIS Express) and navigate to http://localhost:5000. The web page shows the connection status in the upper left:
+The [sample app](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/websockets/samples) that accompanies this article is an echo app. It has a webpage that makes WebSocket connections, and the server resends any messages it receives back to the client. The sample app isn't configured to run from Visual Studio with IIS Express, so run the app in a command shell with [`dotnet run`](/dotnet/core/tools/dotnet-run) and navigate in a browser to `http://localhost:5000`. The webpage shows the connection status:
 
-![Initial state of web page](websockets/_static/start.png)
+![Initial state of webpage before WebSockets connection](websockets/_static/start.png)
 
 Select **Connect** to send a WebSocket request to the URL shown. Enter a test message and select **Send**. When done, select **Close Socket**. The **Communication Log** section reports each open, send, and close action as it happens.
 
-![Initial state of web page](websockets/_static/end.png)
-
+![Final state of webpage after WebSockets connection and test messages are sent and received](websockets/_static/end.png)

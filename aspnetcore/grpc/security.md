@@ -6,6 +6,7 @@ monikerRange: '>= aspnetcore-3.0'
 ms.author: jamesnk
 ms.custom: mvc
 ms.date: 07/07/2019
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/security
 ---
 # Security considerations in gRPC for ASP.NET Core
@@ -21,7 +22,13 @@ gRPC messages are sent and received using HTTP/2. We recommend:
 * [Transport Layer Security (TLS)](https://tools.ietf.org/html/rfc5246) be used to secure messages in production gRPC apps.
 * gRPC services should only listen and respond over secured ports.
 
+::: moniker range=">= aspnetcore-5.0"
+TLS is configured in Kestrel. For more information on configuring Kestrel endpoints, see [Kestrel endpoint configuration](xref:fundamentals/servers/kestrel/endpoints).
+::: moniker-end
+
+::: moniker range="< aspnetcore-5.0"
 TLS is configured in Kestrel. For more information on configuring Kestrel endpoints, see [Kestrel endpoint configuration](xref:fundamentals/servers/kestrel#endpoint-configuration).
+::: moniker-end
 
 ## Exceptions
 

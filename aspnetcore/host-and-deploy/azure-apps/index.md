@@ -5,7 +5,8 @@ description: This article contains links to Azure host and deploy resources.
 monikerRange: '>= aspnetcore-2.1'
 ms.author: bradyg
 ms.custom: mvc
-ms.date: 12/16/2019
+ms.date: 11/6/2020
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: host-and-deploy/azure-apps/index
 ---
 # Deploy ASP.NET Core apps to Azure App Service
@@ -67,25 +68,28 @@ For more information on .NET Core framework components and distribution methods,
 
 Include the following NuGet packages to provide automatic logging features for apps deployed to Azure App Service:
 
-* [Microsoft.AspNetCore.AzureAppServices.HostingStartup](https://www.nuget.org/packages/Microsoft.AspNetCore.AzureAppServices.HostingStartup/) uses [IHostingStartup](xref:fundamentals/configuration/platform-specific-configuration) to provide ASP.NET Core light-up integration with Azure App Service. The added logging features are provided by the `Microsoft.AspNetCore.AzureAppServicesIntegration` package.
+* [Microsoft.AspNetCore.AzureAppServices.HostingStartup](https://www.nuget.org/packages/Microsoft.AspNetCore.AzureAppServices.HostingStartup/) uses [IHostingStartup](xref:fundamentals/configuration/platform-specific-configuration) to provide ASP.NET Core logging integration with Azure App Service. The added logging features are provided by the `Microsoft.AspNetCore.AzureAppServicesIntegration` package.
 * [Microsoft.AspNetCore.AzureAppServicesIntegration](https://www.nuget.org/packages/Microsoft.AspNetCore.AzureAppServicesIntegration/) executes [AddAzureWebAppDiagnostics](/dotnet/api/microsoft.extensions.logging.azureappservicesloggerfactoryextensions.addazurewebappdiagnostics) to add Azure App Service diagnostics logging providers in the `Microsoft.Extensions.Logging.AzureAppServices` package.
 * [Microsoft.Extensions.Logging.AzureAppServices](https://www.nuget.org/packages/Microsoft.Extensions.Logging.AzureAppServices/) provides logger implementations to support Azure App Service diagnostics logs and log streaming features.
 
-The preceding packages aren't available from the [Microsoft.AspNetCore.App metapackage](xref:fundamentals/metapackage-app). Apps that target .NET Framework or reference the `Microsoft.AspNetCore.App` metapackage must explicitly reference the individual packages in the app's project file.
+The preceding packages must be explicitly referenced in the app's project file.
 
 ## Override app configuration using the Azure Portal
+
+::: moniker range=">= aspnetcore-3.0"
+
+App settings in the Azure Portal permit you to set environment variables for the app. Environment variables can be consumed by the [Environment Variables Configuration Provider](xref:fundamentals/configuration/index#environment-variables).
+
+When an app setting is created or modified in the Azure Portal and the **Save** button is selected, the Azure App is restarted. The environment variable is available to the app after the service restarts.
+
+When an app uses the [Generic Host](xref:fundamentals/host/generic-host), environment variables are loaded into the app's configuration when <xref:Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder*> is called to build the host. For more information, see <xref:fundamentals/host/generic-host> and the [Environment Variables Configuration Provider](xref:fundamentals/configuration/index#environment-variables).
+
+::: moniker-end
+::: moniker range="< aspnetcore-3.0"
 
 App settings in the Azure Portal permit you to set environment variables for the app. Environment variables can be consumed by the [Environment Variables Configuration Provider](xref:fundamentals/configuration/index#environment-variables-configuration-provider).
 
 When an app setting is created or modified in the Azure Portal and the **Save** button is selected, the Azure App is restarted. The environment variable is available to the app after the service restarts.
-
-::: moniker range=">= aspnetcore-3.0"
-
-When an app uses the [Generic Host](xref:fundamentals/host/generic-host), environment variables are loaded into the app's configuration when <xref:Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder*> is called to build the host. For more information, see <xref:fundamentals/host/generic-host> and the [Environment Variables Configuration Provider](xref:fundamentals/configuration/index#environment-variables-configuration-provider).
-
-::: moniker-end
-
-::: moniker range="< aspnetcore-3.0"
 
 When an app uses the [Web Host](xref:fundamentals/host/web-host), environment variables are loaded into the app's configuration when <xref:Microsoft.AspNetCore.WebHost.CreateDefaultBuilder*> is called to build the host. For more information, see <xref:fundamentals/host/web-host> and the [Environment Variables Configuration Provider](xref:fundamentals/configuration/index#environment-variables-configuration-provider).
 
@@ -151,6 +155,8 @@ To deploy an app that uses a preview release of .NET Core, see the following res
 
 See the [ASP.NET Core on App Service Dashboard](https://aspnetcoreon.azurewebsites.net/) for the version of ASP.NET Core available on Azure App service.
 
+See [Select the .NET Core version to use](/dotnet/core/versions/selection) for information on selecting the version of the .NET SDK for self-contained deployments.
+
 ### Specify the .NET Core SDK Version using Azure Pipelines
 
 Use [Azure App Service CI/CD scenarios](/azure/app-service/deploy-continuous-deployment) to set up a continuous integration build with Azure DevOps. After the Azure DevOps build is created, optionally configure the build to use a specific SDK version. 
@@ -186,7 +192,7 @@ The [Docker Hub](https://hub.docker.com/r/microsoft/aspnetcore/) contains the la
 
 ### Install the preview site extension
 
-If a problem occurs using the preview site extension, open an [aspnet/AspNetCore issue](https://github.com/aspnet/AspNetCore/issues).
+If a problem occurs using the preview site extension, open an [dotnet/AspNetCore issue](https://github.com/dotnet/AspNetCore/issues).
 
 1. From the Azure Portal, navigate to the App Service.
 1. Select the web app.
@@ -228,9 +234,11 @@ When the operation completes, the latest .NET Core preview is installed. Verify 
 
 **Use the preview site extension with an ARM template**
 
-If an ARM template is used to create and deploy apps, the `siteextensions` resource type can be used to add the site extension to a web app. For example:
+If an ARM template is used to create and deploy apps, the `Microsoft.Web/sites/siteextensions` resource type can be used to add the site extension to a web app. In the following example, the ASP.NET Core 5.0 (x64) Runtime site extension (`AspNetCoreRuntime.5.0.x64`) is added to the app:
 
-[!code-json[](index/sample/arm.json?highlight=2)]
+[!code-json[](index/sample/arm.json)]
+
+For the placeholder `{SITE NAME}`, use the app's name in Azure App Service (for example, `contoso`).
 
 ## Publish and deploy the app
 
@@ -247,16 +255,20 @@ For a 64-bit deployment:
 
 # [Visual Studio](#tab/visual-studio)
 
-1. Select **Build** > **Publish {Application Name}** from the Visual Studio toolbar or right-click the project in **Solution Explorer** and select **Publish**.
-1. In the **Pick a publish target** dialog, confirm that **App Service** is selected.
+1. Right-click the project in **Solution Explorer** and select **Publish**. Alternatively, select **Build** > **Publish {Application Name}** from the Visual Studio toolbar.
+1. In the **Publish** dialog, select **Azure** > **Next**.
+1. Select the Azure service.
 1. Select **Advanced**. The **Publish** dialog opens.
-1. In the **Publish** dialog:
-   * Confirm that the **Release** configuration is selected.
-   * Open the **Deployment Mode** drop-down list and select **Framework-Dependent**.
-   * Select **Portable** as the **Target Runtime**.
-   * If you need to remove additional files upon deployment, open **File Publish Options** and select the check box to remove additional files at the destination.
+1. Select a Resource group and Hosting plan, or create new ones.
+1. Select **Finish**.
+1. In the **Publish** page:
+   * For **Configuration**, select the pen icon **Edit Configuration**:   
+      * Confirm that the **Release** configuration is selected.
+      * In the **Deployment Mode** drop-down list, select  **Framework-Dependent**.
+      * In the **Target Runtime** drop-down list, select the desired runtime. The default is `win-x86`.
+    * To remove additional files upon deployment, open **File Publish Options** and select the check box to remove additional files at the destination.
    * Select **Save**.
-1. Create a new site or update an existing site by following the remaining prompts of the publish wizard.
+   * Select **Publish**.
 
 # [.NET Core CLI](#tab/netcore-cli/)
 
@@ -274,24 +286,28 @@ For a 64-bit deployment:
 
 ### Deploy the app self-contained
 
-Use Visual Studio or the command-line interface (CLI) tools for a [self-contained deployment (SCD)](/dotnet/core/deploying/#self-contained-deployments-scd).
+Use Visual Studio or the .NET Core CLI for a [self-contained deployment (SCD)](/dotnet/core/deploying/#self-contained-deployments-scd).
 
 # [Visual Studio](#tab/visual-studio)
 
-1. Select **Build** > **Publish {Application Name}** from the Visual Studio toolbar or right-click the project in **Solution Explorer** and select **Publish**.
-1. In the **Pick a publish target** dialog, confirm that **App Service** is selected.
+1. Right-click the project in **Solution Explorer** and select **Publish**. Alternatively, select **Build** > **Publish {Application Name}** from the Visual Studio toolbar.
+1. In the **Publish** dialog, select **Azure** > **Next**.
+1. Select the Azure service.
 1. Select **Advanced**. The **Publish** dialog opens.
-1. In the **Publish** dialog:
-   * Confirm that the **Release** configuration is selected.
-   * Open the **Deployment Mode** drop-down list and select **Self-Contained**.
-   * Select the target runtime from the **Target Runtime** drop-down list. The default is `win-x86`.
-   * If you need to remove additional files upon deployment, open **File Publish Options** and select the check box to remove additional files at the destination.
+1. Select a Resource group and Hosting plan, or create new ones.
+1. Select **Finish**.
+1. In the **Publish** page:
+   * For **Configuration**, select the pen icon **Edit Configuration**:   
+      * Confirm that the **Release** configuration is selected.
+      * In the **Deployment Mode** drop-down list, select **Self-Contained**.
+      * In the **Target Runtime** drop-down list, select the desired runtime. The default is `win-x86`.
+    * To remove additional files upon deployment, open **File Publish Options** and select the check box to remove additional files at the destination.
    * Select **Save**.
-1. Create a new site or update an existing site by following the remaining prompts of the publish wizard.
+   * Select **Publish**.
 
 # [.NET Core CLI](#tab/netcore-cli/)
 
-1. In the project file, specify one or more [Runtime Identifiers (RIDs)](/dotnet/core/rid-catalog). Use `<RuntimeIdentifier>` (singular) for a single RID, or use `<RuntimeIdentifiers>` (plural) to provide a semicolon-delimited list of RIDs. In the following example, the `win-x86` RID is specified:
+1. In the project file, specify one or more [Runtime Identifiers (RIDs)](/dotnet/core/rid-catalog). Use `<RuntimeIdentifier>` for a single RID, or use `<RuntimeIdentifiers>` to provide a semicolon-delimited list of multiple RIDs. In the following example, the `win-x86` RID is specified:
 
    ```xml
    <PropertyGroup>
@@ -306,13 +322,13 @@ Use Visual Studio or the command-line interface (CLI) tools for a [self-containe
    dotnet publish --configuration Release --runtime win-x86 --self-contained
    ```
 
-1. Move the contents of the *bin/Release/{TARGET FRAMEWORK}/{RUNTIME IDENTIFIER}/publish* directory to the site in App Service. If dragging the *publish* folder contents from your local hard drive or network share directly to App Service in the Kudu console, drag the files to the `D:\home\site\wwwroot` folder in the Kudu console.
+1. Move the contents of the *bin/Release/{TARGET FRAMEWORK}/{RUNTIME IDENTIFIER}/publish* directory to the site in App Service. If dragging the *publish* folder contents from your local hard drive or network share directly to App Service in the [Kudu console](https://github.com/projectkudu/kudu/wiki), drag the files to the `D:\home\site\wwwroot` folder in the Kudu console.
 
 ---
 
 ## Protocol settings (HTTPS)
 
-Secure protocol bindings allow you specify a certificate to use when responding to requests over HTTPS. Binding requires a valid private certificate (*.pfx*) issued for the specific hostname. For more information, see [Tutorial: Bind an existing custom SSL certificate to Azure App Service](/azure/app-service/app-service-web-tutorial-custom-ssl).
+Secure protocol bindings allow specifying a certificate to use when responding to requests over HTTPS. Binding requires a valid private certificate (*.pfx*) issued for the specific hostname. For more information, see [Tutorial: Bind an existing custom SSL certificate to Azure App Service](/azure/app-service/app-service-web-tutorial-custom-ssl).
 
 ## Transform web.config
 

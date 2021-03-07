@@ -1,3 +1,6 @@
+---
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+---
 
 ## Test the app
 
@@ -6,7 +9,7 @@
 
   ![Create view with fields for genre, price, release date, and title](~/tutorials/first-mvc-app/adding-model/_static/movies.png)
 
-* You may not be able to enter decimal points or commas in the `Price` field. To support [jQuery validation](https://jqueryvalidation.org/) for non-English locales that use a comma (",") for a decimal point, and non US-English date formats, you must take steps to globalize your app. See [https://github.com/aspnet/AspNetCore.Docs/issues/4076](https://github.com/aspnet/AspNetCore.Docs/issues/4076) and [Additional resources](#additional-resources) for more information. For now, just enter whole numbers like 10.
+* You may not be able to enter decimal points or commas in the `Price` field. To support [jQuery validation](https://jqueryvalidation.org/) for non-English locales that use a comma (",") for a decimal point, and non US-English date formats, you must take steps to globalize your app. See [https://github.com/dotnet/AspNetCore.Docs/issues/4076](https://github.com/dotnet/AspNetCore.Docs/issues/4076) and [Additional resources](#additional-resources) for more information. For now, just enter whole numbers like 10.
 
 <a name="displayformatdatelocal"></a>
 

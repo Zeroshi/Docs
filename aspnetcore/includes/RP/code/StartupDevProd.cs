@@ -25,13 +25,13 @@ namespace RPauth
         {
             if (Environment.IsDevelopment())
             {
-                services.AddDbContext<MovieContext>(options =>
+                services.AddDbContext<RazorPagesMovieContext>(options =>
                 options.UseSqlite(
-                    Configuration.GetConnectionString("MovieContext")));
+                    Configuration.GetConnectionString("RazorPagesMovieContext")));
             }
             else
             {
-                services.AddDbContext<MovieContext>(options =>
+                services.AddDbContext<RazorPagesMovieContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("MovieContext")));
             }

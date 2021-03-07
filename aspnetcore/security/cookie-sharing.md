@@ -6,11 +6,12 @@ monikerRange: '>= aspnetcore-2.1'
 ms.author: riande
 ms.custom: mvc
 ms.date: 09/05/2019
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: security/cookie-sharing
 ---
 # Share authentication cookies among ASP.NET apps
 
-By [Rick Anderson](https://twitter.com/RickAndMSFT) and [Luke Latham](https://github.com/guardrex)
+By [Rick Anderson](https://twitter.com/RickAndMSFT)
 
 Websites often consist of individual web apps working together. To provide a single sign-on (SSO) experience, web apps within a site must share authentication cookies. To support this scenario, the data protection stack allows sharing Katana cookie authentication and ASP.NET Core cookie authentication tickets.
 
@@ -48,6 +49,10 @@ services.ConfigureApplicationCookie(options => {
 });
 ```
 
+**Note:** The preceding instructions don't work with `ITicketStore` (`CookieAuthenticationOptions.SessionStore`).  For more information, see [this GitHub issue](https://github.com/dotnet/AspNetCore.Docs/issues/21163).
+
+[!INCLUDE[](~/includes/cookies-not-compressed.md)]
+
 ## Share authentication cookies without ASP.NET Core Identity
 
 When using cookies directly without ASP.NET Core Identity, configure data protection and authentication in `Startup.ConfigureServices`. In the following example, the authentication type is set to `Identity.Application`:
@@ -63,6 +68,8 @@ services.AddAuthentication("Identity.Application")
         options.Cookie.Name = ".AspNet.SharedCookie";
     });
 ```
+
+[!INCLUDE[](~/includes/cookies-not-compressed.md)]
 
 ## Share cookies across different base paths
 

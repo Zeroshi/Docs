@@ -6,6 +6,7 @@ monikerRange: '>= aspnetcore-2.1'
 ms.author: riande
 ms.custom: mvc
 ms.date: 08/03/2019
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: fundamentals/localization-extensibility
 ---
 # Localization Extensibility
@@ -54,7 +55,7 @@ options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(async
         currentCulture = segments[0];
     }
 
-    var requestCulture = new ProviderCultureResult(culture);
+    var requestCulture = new ProviderCultureResult(currentCulture);
     
     return Task.FromResult(requestCulture);
 }));
@@ -75,7 +76,7 @@ options.AddInitialRequestCultureProvider(new CustomRequestCultureProvider(async 
         currentCulture = segments[0];
     }
 
-    var requestCulture = new ProviderCultureResult(culture);
+    var requestCulture = new ProviderCultureResult(currentCulture);
     
     return Task.FromResult(requestCulture);
 }));
@@ -133,7 +134,7 @@ public class AppSettingsRequestCultureProvider : RequestCultureProvider
 
 ASP.NET Core localization provides <xref:Microsoft.Extensions.Localization.ResourceManagerStringLocalizer>. <xref:Microsoft.Extensions.Localization.ResourceManagerStringLocalizer> is an implementation of <xref:Microsoft.Extensions.Localization.IStringLocalizer> that is uses `resx` to store localization resources.
 
-You aren't limited to using `resx` files. By implementing `IStringLocalized`, any data source can be used.
+You aren't limited to using `resx` files. By implementing `IStringLocalizer`, any data source can be used.
 
 The following example projects implement <xref:Microsoft.Extensions.Localization.IStringLocalizer>: 
 

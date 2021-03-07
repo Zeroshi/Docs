@@ -1,3 +1,6 @@
+---
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+---
 * Trust the HTTPS development certificate by running the following command:
 
   ```dotnetcli
@@ -14,3 +17,4 @@
 
   See [Trust the ASP.NET Core HTTPS development certificate](xref:security/enforcing-ssl#trust-the-aspnet-core-https-development-certificate-on-windows-and-macos) for more information.
   
+[!INCLUDE[trust FF](~/includes/trust-ff.md)]

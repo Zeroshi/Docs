@@ -1,12 +1,17 @@
+---
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+---
 Run the following .NET Core CLI commands:
 
 ```dotnetcli
-dotnet tool install --global dotnet-ef
-dotnet tool install --global dotnet-aspnet-codegenerator
-dotnet add package Microsoft.EntityFrameworkCore.SQLite
-dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
-dotnet add package Microsoft.EntityFrameworkCore.Design
-dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet tool install --global dotnet-ef --version 3.1.9
+dotnet tool install --global dotnet-aspnet-codegenerator --version 3.1.4
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 3.1.9
+dotnet add package Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore --version 3.1.9
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design --version 3.1.4
+dotnet add package Microsoft.EntityFrameworkCore.Design --version 3.1.9
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 3.1.9
+dotnet add package Microsoft.Extensions.Logging.Debug --version 3.1.9
 ```
 
 The preceding commands add:

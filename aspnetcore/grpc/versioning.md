@@ -5,6 +5,7 @@ description: Learn how to version gRPC services.
 monikerRange: '>= aspnetcore-3.0'
 ms.author: jamesnk
 ms.date: 01/09/2020
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/versioning
 ---
 # Versioning gRPC services
@@ -26,13 +27,6 @@ Making non-breaking changes to a service has a number of benefits:
 * Avoids work involved with notifying clients of breaking changes, and updating them.
 * Only one version of the service needs to be documented and maintained.
 
-This content focuses on whether changes are **breaking at a gRPC protocol and .NET binary compatibility level**. When making protocol and binary-compatible changes, you must also consider whether older clients can continue working with the new server behavior. For example, adding a new field to a request message:
-
-* Isn't a protocol breaking change.
-* Returning an error status on the server if the new field isn't set makes it a breaking change for old clients.
-
-Behavior compatibility is determined by your app-specific code.
-
 ### Non-breaking changes
 
 These changes are non-breaking at a gRPC protocol level and .NET binary level.
@@ -51,7 +45,7 @@ The following changes are non-breaking at a gRPC protocol level, but the client 
 * **Renaming a message** - Message names aren't typically sent on the network, so this isn't a gRPC protocol breaking change. The client will need to be updated if it upgrades to the latest contract. One situation where message names **are** sent on the network is with [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) fields, when the message name is used to identify the message type.
 * **Changing csharp_namespace** - Changing `csharp_namespace` will change the namespace of generated .NET types. This isn't a gRPC protocol breaking change, but the client needs to be updated if it upgrades to the latest contract.
 
-### Breaking changes
+### Protocol breaking changes
 
 The following items are protocol and binary breaking changes:
 
@@ -60,6 +54,15 @@ The following items are protocol and binary breaking changes:
 * **Changing a field number** - With Protobuf payloads, the field number is used to identify fields on the network.
 * **Renaming a package, service or method** - gRPC uses the package name, service name, and method name to build the URL. The client gets an *UNIMPLEMENTED* status from the server.
 * **Removing a service or method** - The client gets an *UNIMPLEMENTED* status from the server when calling the removed method.
+
+### Behavior breaking changes
+
+When making non-breaking changes, you must also consider whether older clients can continue working with the new service behavior. For example, adding a new field to a request message:
+
+* Isn't a protocol breaking change.
+* Returning an error status on the server if the new field isn't set makes it a breaking change for old clients.
+
+Behavior compatibility is determined by your app-specific code.
 
 ## Version number services
 
@@ -98,3 +101,7 @@ Publishing multiple versions of a service duplicates it. To reduce duplication, 
 [!code-csharp[](versioning/sample/GreeterServiceV1.cs?highlight=10,19)]
 
 Services and messages generated with different package names are **different .NET types**. Moving business logic to a centralized location requires mapping messages to common types.
+
+## Additional resources
+
+* <xref:grpc/protobuf>

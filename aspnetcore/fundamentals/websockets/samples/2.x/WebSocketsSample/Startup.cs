@@ -49,7 +49,6 @@ namespace EchoApp
             var webSocketOptions = new WebSocketOptions() 
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(120),
-                ReceiveBufferSize = 4 * 1024
             };
 
             app.UseWebSockets(webSocketOptions);
@@ -61,7 +60,6 @@ namespace EchoApp
             var webSocketOptions = new WebSocketOptions()
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(120),
-                ReceiveBufferSize = 4 * 1024
             };
             webSocketOptions.AllowedOrigins.Add("https://client.com");
             webSocketOptions.AllowedOrigins.Add("https://www.client.com");
@@ -77,8 +75,10 @@ namespace EchoApp
                 {
                     if (context.WebSockets.IsWebSocketRequest)
                     {
-                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                        await Echo(context, webSocket);
+                        using (WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync())
+                        {
+                            await Echo(context, webSocket);
+                        }
                     }
                     else
                     {

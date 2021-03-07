@@ -5,6 +5,7 @@ description: Learn how to move an existing C-core based gRPC app to run on top o
 monikerRange: '>= aspnetcore-3.0'
 ms.author: johluo
 ms.date: 09/25/2019
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/migration
 ---
 # Migrating gRPC services from C-core to ASP.NET Core
@@ -72,7 +73,13 @@ public class GreeterService : Greeter.GreeterBase
 
 ## HTTPS
 
+::: moniker range=">= aspnetcore-5.0"
+C-core-based apps configure HTTPS through the [Server.Ports property](https://grpc.io/grpc/csharp/api/Grpc.Core.Server.html#Grpc_Core_Server_Ports). A similar concept is used to configure servers in ASP.NET Core. For example, Kestrel uses [endpoint configuration](xref:fundamentals/servers/kestrel/endpoints) for this functionality.
+::: moniker-end
+
+::: moniker range="< aspnetcore-5.0"
 C-core-based apps configure HTTPS through the [Server.Ports property](https://grpc.io/grpc/csharp/api/Grpc.Core.Server.html#Grpc_Core_Server_Ports). A similar concept is used to configure servers in ASP.NET Core. For example, Kestrel uses [endpoint configuration](xref:fundamentals/servers/kestrel#endpoint-configuration) for this functionality.
+::: moniker-end
 
 ## gRPC Interceptors vs Middleware
 

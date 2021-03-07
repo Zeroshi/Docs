@@ -4,7 +4,8 @@ author: jamesnk
 description: Learn how to use authentication and authorization in gRPC for ASP.NET Core.
 monikerRange: '>= aspnetcore-3.0'
 ms.author: jamesnk
-ms.date: 12/05/2019
+ms.date: 05/26/2020
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/authn-and-authz
 ---
 
@@ -12,7 +13,7 @@ uid: grpc/authn-and-authz
 
 By [James Newton-King](https://twitter.com/jamesnk)
 
-[View or download sample code](https://github.com/aspnet/AspNetCore.Docs/tree/master/aspnetcore/grpc/authn-and-authz/sample/) [(how to download)](xref:index#how-to-download-a-sample)
+[View or download sample code](https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/grpc/authn-and-authz/sample/) [(how to download)](xref:index#how-to-download-a-sample)
 
 ## Authenticate users calling a gRPC service
 
@@ -30,7 +31,7 @@ public void Configure(IApplicationBuilder app)
 
     app.UseEndpoints(endpoints =>
     {
-        routes.MapGrpcService<GreeterService>();
+        endpoints.MapGrpcService<GreeterService>();
     });
 }
 ```
@@ -59,7 +60,7 @@ The client can provide an access token for authentication. The server validates 
 
 On the server, bearer token authentication is configured using the [JWT Bearer middleware](/dotnet/api/microsoft.extensions.dependencyinjection.jwtbearerextensions.addjwtbearer).
 
-In the .NET gRPC client, the token can be sent with calls as a header:
+In the .NET gRPC client, the token can be sent with calls by using the `Metadata` collection. Entries in the `Metadata` collection are sent with a gRPC call as HTTP headers:
 
 ```csharp
 public bool DoAuthenticatedCall(
@@ -75,7 +76,9 @@ public bool DoAuthenticatedCall(
 }
 ```
 
-Configuring `ChannelCredentials` on a channel is an alternative way to send the token to the service with gRPC calls. The credential is run each time a gRPC call is made, which avoids the need to write code in multiple places to pass the token yourself.
+Configuring `ChannelCredentials` on a channel is an alternative way to send the token to the service with gRPC calls. A `ChannelCredentials` can include `CallCredentials`, which provide a way to automatically set `Metadata`.
+
+`CallCredentials` is run each time a gRPC call is made, which avoids the need to write code in multiple places to pass the token yourself. Note that `CallCredentials` are only applied if the channel is secured with TLS. `CallCredentials` aren't applied on unsecured non-TLS channels.
 
 The credential in the following example configures the channel to send the token with every gRPC call:
 
@@ -106,7 +109,7 @@ private static GrpcChannel CreateAuthenticatedChannel(string address)
 A client could alternatively provide a client certificate for authentication. [Certificate authentication](https://tools.ietf.org/html/rfc5246#section-7.4.4) happens at the TLS level, long before it ever gets to ASP.NET Core. When the request enters ASP.NET Core, the [client certificate authentication package](xref:security/authentication/certauth) allows you to resolve the certificate to a `ClaimsPrincipal`.
 
 > [!NOTE]
-> The host needs to be configured to accept client certificates. See [configure your host to require certificates](xref:security/authentication/certauth#configure-your-host-to-require-certificates) for information on accepting client certificates in Kestrel, IIS and Azure.
+> Configure the server to accept client certificates. For information on accepting client certificates in Kestrel, IIS, and Azure, see <xref:security/authentication/certauth#configure-your-server-to-require-certificates>.
 
 In the .NET gRPC client, the client certificate is added to `HttpClientHandler` that is then used to create the gRPC client:
 
@@ -122,7 +125,7 @@ public Ticketer.TicketerClient CreateClientWithCert(
     // Create the gRPC channel
     var channel = GrpcChannel.ForAddress(baseAddress, new GrpcChannelOptions
     {
-        HttpClient = new HttpClient(handler)
+        HttpHandler = handler
     });
 
     return new Ticketer.TicketerClient(channel);

@@ -4,6 +4,7 @@ author: rick-anderson
 description: Discover articles based on ASP.NET Core projects created with individual user accounts.
 ms.author: riande
 ms.date: 12/11/2019
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: security/authentication/individual
 ---
 # Articles based on ASP.NET Core projects created with individual user accounts
@@ -30,7 +31,7 @@ dotnet new razor -au Individual
 
 ::: moniker-end
 
-See [this GitHub issue](https://github.com/aspnet/AspNetCore/issues/5833) for web API authentication.
+See [this GitHub issue](https://github.com/dotnet/AspNetCore/issues/5833) for web API authentication.
 
 <a name="no"></a>
 

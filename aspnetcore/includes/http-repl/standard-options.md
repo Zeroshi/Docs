@@ -1,3 +1,6 @@
+---
+no-loc: [appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+---
 * `-F|--no-formatting`
 
   A flag whose presence suppresses HTTP response formatting.
@@ -8,10 +11,6 @@
 
   * `{header}={value}`
   * `{header}:{value}`
-
-* `--response`
-
-  Specifies a file to which the entire HTTP response (including headers and body) should be written. For example, `--response "C:\response.txt"`. The file is created if it doesn't exist.
 
 * `--response:body`
 
